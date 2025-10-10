@@ -28,6 +28,25 @@ fastapi-example/
 
 ## 설치 및 실행
 
+### uv 설치
+
+uv가 설치되어 있지 않다면 먼저 설치해주세요.
+
+**macOS/Linux:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows:**
+```powershell
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**설치 확인:**
+```bash
+uv --version
+```
+
 ### uv 사용 (권장)
 
 ```bash
