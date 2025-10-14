@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  # PostgreSQL 데이터베이스
+  db:
+    image: postgres:15-alpine
+    container_name: fastapi-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todoapp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # FastAPI 애플리케이션
   fastapi-app:
     build:
       context: .
@@ -10,9 +30,13 @@ services:
       - "8000:8000"
     environment:
       - ENVIRONMENT=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/todoapp
     volumes:
       # 개발 중 코드 변경사항을 실시간 반영 (개발 모드)
       - ./app:/app/app
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
@@ -20,3 +44,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+
+# 볼륨 정의 (데이터 영속성)
+volumes:
+  postgres_data:

@@ -1,6 +1,6 @@
 # FastAPI TODO API 예제
 
-FastAPI 학습을 위한 간단한 TODO 관리 API입니다.
+FastAPI + PostgreSQL + Docker를 사용한 TODO 관리 API입니다.
 
 ## 특징
 
@@ -8,7 +8,8 @@ FastAPI 학습을 위한 간단한 TODO 관리 API입니다.
 - ✅ Dependency Injection 패턴 적용
 - ✅ 자동 API 문서 생성
 - ✅ RESTful API 설계
-- ✅ 메모리 기반 저장소 (DB 불필요)
+- ✅ PostgreSQL 데이터베이스 연동 (SQLAlchemy ORM)
+- ✅ Docker & Docker Compose로 간편한 실행
 
 ## 프로젝트 구조
 
@@ -17,12 +18,19 @@ fastapi-example/
 ├── app/
 │   ├── __init__.py
 │   ├── main.py              # FastAPI 앱 진입점
-│   ├── models.py            # Pydantic 모델
+│   ├── database.py          # DB 연결 설정
+│   ├── init_db.py           # DB 초기화
+│   ├── models.py            # Pydantic + SQLAlchemy 모델
 │   ├── dependencies.py      # DI 함수들
 │   └── routers/
 │       ├── __init__.py
 │       └── todos.py         # TODO API 라우터
+├── Dockerfile               # Docker 이미지 빌드
+├── docker-compose.yml       # PostgreSQL + FastAPI
+├── .dockerignore
 ├── pyproject.toml
+├── 1study-docker.md         # Docker 학습 가이드
+├── 2study-database.md       # DB 연동 학습 가이드
 └── README.md
 ```
 
@@ -198,30 +206,42 @@ print(response.json())
 - 라우터 등록
 - 메타데이터 정의
 
-## Docker 학습
+## 학습 가이드
 
-Docker에 대해 더 자세히 알고 싶다면:
+### Docker
+Docker 컨테이너화에 대해 배우고 싶다면:
 - [Docker 기초 학습 가이드](1study-docker.md)
+  - Docker 개념 및 사용법
+  - Dockerfile 작성
+  - Docker Compose 활용
 
-Docker 파일 구조:
-- [`Dockerfile`](Dockerfile) - 이미지 빌드 레시피
-- [`docker-compose.yml`](docker-compose.yml) - 멀티 컨테이너 설정
-- [`.dockerignore`](.dockerignore) - 이미지에서 제외할 파일 목록
+### 데이터베이스
+PostgreSQL과 SQLAlchemy ORM 연동에 대해 배우고 싶다면:
+- [데이터베이스 연동 학습 가이드](2study-database.md)
+  - PostgreSQL 기초
+  - SQLAlchemy ORM 사용법
+  - 실전 CRUD 구현
 
 ## 다음 단계
 
 이 예제를 완료했다면:
 
 1. ✅ Docker 컨테이너화 (완료)
-2. ✅ DB 연결 (SQLAlchemy + PostgreSQL + Docker)
-3. ✅ 인증/인가 (JWT)
-4. ✅ 테스트 작성 (pytest)
-5. ✅ 프로덕션 배포 (Kubernetes, AWS ECS)
+2. ✅ PostgreSQL + SQLAlchemy 연동 (완료)
+3. ⬜ 인증/인가 (JWT)
+4. ⬜ 테스트 작성 (pytest)
+5. ⬜ 프로덕션 배포 (Kubernetes, AWS ECS)
 
 ## 참고 자료
 
+### 공식 문서
 - [FastAPI 공식 문서](https://fastapi.tiangolo.com/)
 - [Pydantic 공식 문서](https://docs.pydantic.dev/)
+- [SQLAlchemy 공식 문서](https://docs.sqlalchemy.org/)
+- [PostgreSQL 공식 문서](https://www.postgresql.org/docs/)
 - [Docker 공식 문서](https://docs.docker.com/)
-- [FastAPI 학습 가이드](fastapi-beginner-guide.md)
+
+### 학습 가이드
+- [FastAPI 초보자 가이드](fastapi-beginner-guide.md)
 - [Docker 학습 가이드](1study-docker.md)
+- [데이터베이스 연동 가이드](2study-database.md)
