@@ -28,6 +28,38 @@ fastapi-example/
 
 ## 설치 및 실행
 
+### Docker 사용 (권장)
+
+Docker를 사용하면 환경 설정 없이 바로 실행할 수 있습니다.
+
+**사전 요구사항:**
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) 설치
+
+**실행 방법:**
+
+```bash
+# 1. Docker Compose로 실행
+docker-compose up -d
+
+# 2. 로그 확인
+docker-compose logs -f
+
+# 3. 브라우저에서 확인
+# http://localhost:8000/docs
+
+# 4. 중지
+docker-compose down
+```
+
+**개발 모드로 실행:**
+```bash
+# 코드 변경 시 자동으로 재시작됩니다
+docker-compose up
+
+# 컨테이너 내부 접속 (디버깅)
+docker-compose exec fastapi-app /bin/bash
+```
+
 ### uv 설치
 
 uv가 설치되어 있지 않다면 먼저 설치해주세요.
@@ -166,17 +198,30 @@ print(response.json())
 - 라우터 등록
 - 메타데이터 정의
 
+## Docker 학습
+
+Docker에 대해 더 자세히 알고 싶다면:
+- [Docker 기초 학습 가이드](1study-docker.md)
+
+Docker 파일 구조:
+- [`Dockerfile`](Dockerfile) - 이미지 빌드 레시피
+- [`docker-compose.yml`](docker-compose.yml) - 멀티 컨테이너 설정
+- [`.dockerignore`](.dockerignore) - 이미지에서 제외할 파일 목록
+
 ## 다음 단계
 
 이 예제를 완료했다면:
 
-1. ✅ DB 연결 (SQLAlchemy + PostgreSQL)
-2. ✅ 인증/인가 (JWT)
-3. ✅ 테스트 작성 (pytest)
-4. ✅ 배포 (Docker)
+1. ✅ Docker 컨테이너화 (완료)
+2. ✅ DB 연결 (SQLAlchemy + PostgreSQL + Docker)
+3. ✅ 인증/인가 (JWT)
+4. ✅ 테스트 작성 (pytest)
+5. ✅ 프로덕션 배포 (Kubernetes, AWS ECS)
 
 ## 참고 자료
 
 - [FastAPI 공식 문서](https://fastapi.tiangolo.com/)
 - [Pydantic 공식 문서](https://docs.pydantic.dev/)
-- [FastAPI 학습 가이드](../fastapi-beginner-guide.md)
+- [Docker 공식 문서](https://docs.docker.com/)
+- [FastAPI 학습 가이드](fastapi-beginner-guide.md)
+- [Docker 학습 가이드](1study-docker.md)
