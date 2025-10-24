@@ -35,10 +35,14 @@ pip install requests python-dotenv langchain langchain-openai langfuse
 
 #### 2. Langfuse 셀프 호스팅 (선택)
 ```bash
-cd ai-basics
-# docker-compose.yml 생성 후
-docker-compose up -d
-# http://localhost:3000 접속
+# Langfuse 저장소 클론
+git clone https://github.com/langfuse/langfuse.git
+cd langfuse
+
+# Docker Compose 실행
+docker compose up -d
+
+# http://localhost:3000 접속하여 회원가입 후 API 키 발급
 ```
 
 #### 3. 예시 실행
