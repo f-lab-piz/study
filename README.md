@@ -21,7 +21,8 @@
 
 #### 1. 환경 설정
 ```bash
-# .env 파일 생성
+# 프로젝트 루트에 .env 파일 생성
+cd /workspaces/study  # 또는 프로젝트 루트로 이동
 cat > .env << EOF
 OPENAI_API_KEY=sk-your-key-here
 LANGFUSE_PUBLIC_KEY=pk-lf-your-key
@@ -32,6 +33,8 @@ EOF
 # 필요한 패키지 설치
 pip install requests python-dotenv langchain langchain-openai langfuse
 ```
+
+**참고:** 노트북들은 `find_dotenv()`를 사용하여 현재 디렉토리부터 상위로 올라가며 `.env` 파일을 자동으로 찾습니다. 프로젝트 루트에 `.env` 파일을 두면 어디서 실행하든 동작합니다.
 
 #### 2. Langfuse 셀프 호스팅 (선택)
 ```bash
