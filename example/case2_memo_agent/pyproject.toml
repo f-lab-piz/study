@@ -14,5 +14,8 @@ dependencies = [
     "langchain-mcp-adapters>=0.1.13",
 ]
 
+[tool.setuptools]
+py-modules = ["memo_agent", "memo_mcp_server"]
+
 [tool.uv]
 package = true
