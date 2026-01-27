@@ -1,0 +1,12 @@
+[project]
+name = "week1-fastapi-basics"
+version = "0.1.0"
+description = "1주차: FastAPI 첫 실행"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.0",
+]
+
+[tool.uv]
+dev-dependencies = []
