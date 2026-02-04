@@ -1,4 +1,4 @@
-# 파이썬 백엔드 기본기 4주 과정
+# 파이썬 백엔드 기본기 3주 과정
 
 > 주 1회 40분 / FastAPI + Docker + PostgreSQL
 
@@ -11,28 +11,25 @@ FastAPI로 CRUD 백엔드가 어떻게 만들어지고,
 
 | 주차 | 주제 | 핵심 |
 |------|------|------|
-| [1주차](./week1/) | 백엔드 감 잡기 + FastAPI 첫 실행 | uv, FastAPI, /docs |
-| [2주차](./week2/) | CRUD로 백엔드답게 만들기 | Pydantic, 메모리 CRUD |
-| [3주차](./week3/) | DB 연결해서 진짜 서비스처럼 | Docker, PostgreSQL, ORM |
-| [4주차](./week4/) | 테스트와 정리 | pytest, 전체 흐름 정리 |
+| [1주차](./week1/) | 백엔드 감 잡기 + CRUD 구현 | uv, FastAPI, Pydantic, 메모리 CRUD |
+| [2주차](./week2/) | DB 연결해서 진짜 서비스처럼 | Docker, PostgreSQL, ORM |
+| [3주차](./week3/) | 테스트와 정리 | pytest, 전체 흐름 정리 |
 
 ## 학습 흐름
 
 ```
-1주차: FastAPI만 (uv run)
+1주차: FastAPI + CRUD (메모리)
     ↓
-2주차: + CRUD (아직 메모리)
+2주차: + Docker + DB (영구 저장)
     ↓
-3주차: + Docker + DB (영구 저장)
-    ↓
-4주차: + 테스트 (품질 보장)
+3주차: + 테스트 (품질 보장)
 ```
 
 ## 사전 준비
 
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/) 설치
-- Docker Desktop (3주차부터)
+- Docker Desktop (2주차부터)
 
 ```bash
 # uv 설치 (macOS/Linux)

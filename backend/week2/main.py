@@ -1,0 +1,207 @@
+"""
+2주차: FastAPI + PostgreSQL CRUD
+- Week1의 메모리 저장(dict)을 PostgreSQL로 전환
+- Docker Compose로 DB 실행
+- SQLAlchemy ORM 사용
+"""
+
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+from pydantic import BaseModel, EmailStr
+from typing import List
+
+from database import engine, get_db, Base
+from models import User
+
+# 앱 시작 시 테이블 생성
+# (실제 운영에서는 Alembic 같은 마이그레이션 도구 사용)
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title="2주차 - DB 연동 CRUD",
+    description="PostgreSQL + SQLAlchemy + FastAPI",
+    version="0.2.0",
+)
+
+
+# ===========================================
+# Pydantic 스키마
+# ===========================================
+
+
+class UserCreate(BaseModel):
+    """유저 생성 요청 스키마"""
+
+    name: str
+    email: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "김철수",
+                "email": "kim@example.com",
+            }
+        }
+
+
+class UserUpdate(BaseModel):
+    """유저 수정 요청 스키마 (모두 선택적)"""
+
+    name: str | None = None
+    email: str | None = None
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "김영희",
+                "email": "kim.new@example.com",
+            }
+        }
+
+
+class UserResponse(BaseModel):
+    """유저 응답 스키마"""
+
+    id: int
+    name: str
+    email: str
+
+    class Config:
+        # ORM 모델을 Pydantic 모델로 변환 허용
+        from_attributes = True
+
+
+# ===========================================
+# 헬스체크
+# ===========================================
+
+
+@app.get("/")
+def root():
+    """루트 경로 - 서버 상태 확인"""
+    return {"message": "Week2 - PostgreSQL CRUD API", "status": "running"}
+
+
+@app.get("/health")
+def health_check(db: Session = Depends(get_db)):
+    """헬스체크 - DB 연결 확인"""
+    try:
+        # DB 쿼리 테스트
+        db.execute("SELECT 1")
+        return {"status": "ok", "database": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database error: {str(e)}")
+
+
+# ===========================================
+# CRUD API - PostgreSQL 버전
+# ===========================================
+
+
+@app.post("/users", response_model=UserResponse, status_code=201)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    """
+    새 유저 생성
+
+    - **name**: 유저 이름
+    - **email**: 이메일 (중복 불가)
+    """
+    # 이메일 중복 체크
+    existing = db.query(User).filter(User.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="이미 존재하는 이메일입니다")
+
+    # 새 유저 생성
+    db_user = User(name=user.name, email=user.email)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)  # DB에서 생성된 ID 등을 다시 로드
+
+    return db_user
+
+
+@app.get("/users", response_model=List[UserResponse])
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    모든 유저 조회
+
+    - **skip**: 건너뛸 개수 (페이지네이션)
+    - **limit**: 최대 조회 개수 (기본 100)
+    """
+    users = db.query(User).offset(skip).limit(limit).all()
+    return users
+
+
+@app.get("/users/{user_id}", response_model=UserResponse)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    """
+    특정 유저 조회
+
+    - **user_id**: 조회할 유저의 ID
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="유저를 찾을 수 없습니다")
+
+    return user
+
+
+@app.put("/users/{user_id}", response_model=UserResponse)
+def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
+    """
+    유저 정보 수정
+
+    - **user_id**: 수정할 유저의 ID
+    - **name**: 새 이름 (선택적)
+    - **email**: 새 이메일 (선택적)
+    """
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="유저를 찾을 수 없습니다")
+
+    # 전달된 값만 업데이트
+    if user.name is not None:
+        db_user.name = user.name
+    if user.email is not None:
+        # 이메일 중복 체크 (자기 자신 제외)
+        existing = (
+            db.query(User)
+            .filter(User.email == user.email, User.id != user_id)
+            .first()
+        )
+        if existing:
+            raise HTTPException(status_code=400, detail="이미 존재하는 이메일입니다")
+        db_user.email = user.email
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    """
+    유저 삭제
+
+    - **user_id**: 삭제할 유저의 ID
+    """
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="유저를 찾을 수 없습니다")
+
+    db.delete(db_user)
+    db.commit()
+
+    return {"message": "삭제 완료", "deleted_id": user_id}
+
+
+# ===========================================
+# 통계 API (추가)
+# ===========================================
+
+
+@app.get("/stats")
+def get_stats(db: Session = Depends(get_db)):
+    """전체 유저 수 조회"""
+    total_users = db.query(User).count()
+    return {"total_users": total_users}
