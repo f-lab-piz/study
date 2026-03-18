@@ -1,0 +1,7 @@
+[project]
+name = "week5"
+version = "0.1.0"
+description = "5주차: 상태 관리, 멱등성, MVP 설계 예제"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
